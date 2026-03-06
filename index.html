@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SharkGame Studio</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=DM+Sans:ital,wght@0,400;0,500;0,600;1,400&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --orange-primary: #FF6B35;
+            --orange-light: #FF8F5E;
+            --orange-dark: #E85A25;
+            --orange-pale: #FFF4EE;
+            --orange-subtle: #FFEADD;
+            --white: #FFFFFF;
+            --off-white: #FAFAFA;
+            --gray-50: #F8F8F8;
+            --gray-100: #F0F0F0;
+            --gray-200: #E0E0E0;
+            --gray-400: #999999;
+            --gray-600: #666666;
+            --gray-800: #2A2A2A;
+            --gray-900: #1A1A1A;
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-body: 'DM Sans', sans-serif;
+            --font-cn: 'Noto Sans SC', sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            color: var(--gray-800);
+            background: var(--white);
+            overflow-x: hidden;
+        }
+
+        body.cn {
+            font-family: var(--font-cn), var(--font-body);
+        }
+
+        /* ===== NAV ===== */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--gray-100);
+            transition: box-shadow 0.3s ease;
+        }
+
+        nav.scrolled {
+            box-shadow: 0 2px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 40px;
+            height: 72px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-logo {
+            font-family: var(--font-display);
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gray-900);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-logo .shark-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--orange-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: white;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 36px;
+        }
+
+        .nav-links a {
+            font-family: var(--font-display);
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--gray-600);
+            text-decoration: none;
+            letter-spacing: 0.3px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--orange-primary);
+        }
+
+        .lang-switch {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: var(--gray-50);
+            border-radius: 20px;
+            padding: 4px;
+            cursor: pointer;
+        }
+
+        .lang-btn {
+            font-family: var(--font-display);
+            font-size: 12px;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 16px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: transparent;
+            color: var(--gray-400);
+        }
+
+        .lang-btn.active {
+            background: var(--orange-primary);
+            color: white;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            background: var(--white);
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -10%;
+            width: 700px;
+            height: 700px;
+            background: radial-gradient(circle, var(--orange-subtle) 0%, transparent 70%);
+            opacity: 0.6;
+            animation: float 12s ease-in-out infinite;
+        }
+
+        .hero-bg::after {
+            content: '';
+            position: absolute;
+            bottom: -10%;
+            left: -5%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, var(--orange-pale) 0%, transparent 70%);
+            opacity: 0.5;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, -40px); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 800px;
+            padding: 0 40px;
+            animation: fadeUp 1s ease-out;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-tag {
+            display: inline-block;
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--orange-primary);
+            background: var(--orange-pale);
+            padding: 8px 20px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+        }
+
+        .hero h1 {
+            font-family: var(--font-display);
+            font-size: clamp(48px, 7vw, 80px);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            color: var(--gray-900);
+            margin-bottom: 24px;
+        }
+
+        .hero h1 span {
+            color: var(--orange-primary);
+        }
+
+        .hero p {
+            font-size: 18px;
+            line-height: 1.7;
+            color: var(--gray-600);
+            max-width: 560px;
+            margin: 0 auto;
+        }
+
+        .hero-scroll {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--gray-400);
+            font-size: 12px;
+            font-family: var(--font-display);
+            letter-spacing: 1px;
+            animation: bob 2s ease-in-out infinite;
+        }
+
+        @keyframes bob {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gray-200), transparent);
+        }
+
+        /* ===== SECTIONS ===== */
+        section {
+            padding: 120px 40px;
+        }
+
+        .section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--orange-primary);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(32px, 4.5vw, 48px);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -1px;
+            color: var(--gray-900);
+            margin-bottom: 24px;
+        }
+
+        /* ===== GAME SECTION ===== */
+        #game {
+            background: var(--off-white);
+        }
+
+        .game-layout {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+        }
+
+        .game-visual {
+            background: linear-gradient(135deg, var(--orange-pale), var(--orange-subtle));
+            border-radius: 24px;
+            aspect-ratio: 4/3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .game-visual-inner {
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .game-visual-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .game-visual-text {
+            font-family: var(--font-display);
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--orange-dark);
+            letter-spacing: -0.5px;
+        }
+
+        .game-visual::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(circle at 20% 80%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 143, 94, 0.1) 0%, transparent 50%);
+        }
+
+        .game-description {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--gray-600);
+            margin-bottom: 32px;
+        }
+
+        .game-features {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .feature-dot {
+            width: 8px;
+            height: 8px;
+            min-width: 8px;
+            background: var(--orange-primary);
+            border-radius: 50%;
+            margin-top: 8px;
+        }
+
+        .feature-item span {
+            font-size: 15px;
+            line-height: 1.6;
+            color: var(--gray-600);
+        }
+
+        .game-status {
+            margin-top: 36px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: var(--white);
+            padding: 12px 24px;
+            border-radius: 32px;
+            border: 1px solid var(--gray-100);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #4CAF50;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        .game-status span {
+            font-family: var(--font-display);
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--gray-600);
+            letter-spacing: 0.5px;
+        }
+
+        /* ===== TEAM SECTION ===== */
+        #team {
+            background: var(--white);
+        }
+
+        .team-intro {
+            font-size: 17px;
+            line-height: 1.8;
+            color: var(--gray-600);
+            max-width: 600px;
+            margin-bottom: 64px;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 32px;
+        }
+
+        .team-card {
+            text-align: center;
+            padding: 40px 24px;
+            border-radius: 20px;
+            border: 1px solid var(--gray-100);
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .team-card:hover {
+            border-color: var(--orange-light);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 40px rgba(255, 107, 53, 0.08);
+        }
+
+        .team-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--orange-pale), var(--orange-subtle));
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            color: var(--orange-primary);
+            overflow: hidden;
+            border: 3px solid var(--white);
+            box-shadow: 0 4px 16px rgba(255, 107, 53, 0.12);
+        }
+
+        .team-photo img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .team-name {
+            font-family: var(--font-display);
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+        }
+
+        .team-title {
+            font-size: 14px;
+            color: var(--orange-primary);
+            font-weight: 500;
+        }
+
+        /* ===== CONTACT ===== */
+        #contact {
+            background: var(--gray-900);
+            text-align: center;
+            padding: 100px 40px;
+        }
+
+        #contact .section-label {
+            color: var(--orange-light);
+        }
+
+        #contact .section-title {
+            color: var(--white);
+        }
+
+        .contact-text {
+            font-size: 17px;
+            line-height: 1.7;
+            color: rgba(255, 255, 255, 0.5);
+            margin-bottom: 40px;
+        }
+
+        .contact-email {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            font-family: var(--font-display);
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--white);
+            text-decoration: none;
+            padding: 18px 40px;
+            background: var(--orange-primary);
+            border-radius: 40px;
+            transition: all 0.3s ease;
+        }
+
+        .contact-email:hover {
+            background: var(--orange-light);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 32px rgba(255, 107, 53, 0.3);
+        }
+
+        .footer-bottom {
+            margin-top: 64px;
+            padding-top: 32px;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.3);
+            font-family: var(--font-display);
+        }
+
+        .footer-location {
+            margin-top: 8px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 900px) {
+            .game-layout {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+
+            .team-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 24px;
+            }
+
+            .nav-links {
+                gap: 20px;
+            }
+
+            section {
+                padding: 80px 24px;
+            }
+
+            .nav-inner {
+                padding: 0 24px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .team-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .nav-links a.nav-link-text {
+                display: none;
+            }
+
+            .hero h1 {
+                letter-spacing: -1px;
+            }
+
+            .contact-email {
+                font-size: 16px;
+                padding: 16px 32px;
+            }
+        }
+
+        /* ===== ANIMATIONS ON SCROLL ===== */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- NAV -->
+    <nav id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <div class="shark-icon">🦈</div>
+                SharkGame
+            </a>
+            <div class="nav-links">
+                <a href="#game" class="nav-link-text" data-en="Our Game" data-cn="我们的游戏">Our Game</a>
+                <a href="#team" class="nav-link-text" data-en="Team" data-cn="团队">Team</a>
+                <a href="#contact" class="nav-link-text" data-en="Contact" data-cn="联系">Contact</a>
+                <div class="lang-switch">
+                    <button class="lang-btn active" onclick="setLang('en')">EN</button>
+                    <button class="lang-btn" onclick="setLang('cn')">中文</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-content">
+            <div class="hero-tag" data-en="Narrative Simulation Studio" data-cn="叙事模拟游戏工作室">Narrative Simulation Studio</div>
+            <h1 data-en='Stories worth<br><span>pouring into</span>' data-cn='值得倾注的<br><span>每一个故事</span>'>Stories worth<br><span>pouring into</span></h1>
+            <p data-en="We build games where every choice shapes a story. Our debut title SharkTown is currently in development." data-cn="我们打造让每一个选择都影响故事走向的游戏。首款作品「鲨鱼小镇」正在开发中。">We build games where every choice shapes a story. Our debut title SharkTown is currently in development.</p>
+        </div>
+        <div class="hero-scroll">
+            <div class="scroll-line"></div>
+        </div>
+    </section>
+
+    <!-- GAME -->
+    <section id="game">
+        <div class="section-inner">
+            <div class="game-layout">
+                <div class="game-visual reveal">
+                    <div class="game-visual-inner">
+                        <div class="game-visual-icon">🍸</div>
+                        <div class="game-visual-text">SharkTown</div>
+                    </div>
+                </div>
+                <div class="reveal">
+                    <div class="section-label" data-en="Our Game" data-cn="我们的游戏">Our Game</div>
+                    <h2 class="section-title" data-en='SharkTown' data-cn='鲨鱼小镇'>SharkTown</h2>
+                    <p class="game-description" data-en="A narrative-driven bar management sim set in a magical town where every cocktail you craft shapes the story. Think Stardew Valley meets mixology — forage for enchanted ingredients by day, brew magical drinks by night, and watch your choices ripple through the lives of a cast of deeply flawed, wonderfully complicated NPCs." data-cn="一款设定在魔法小镇的叙事驱动酒吧经营模拟游戏。每一杯调制的鸡尾酒都在塑造故事的走向。白天搜集魔法食材，夜晚酿造奇幻酒饮，你的每个选择都会影响一群性格鲜明、故事复杂的NPC的命运。">A narrative-driven bar management sim set in a magical town where every cocktail you craft shapes the story. Think Stardew Valley meets mixology — forage for enchanted ingredients by day, brew magical drinks by night, and watch your choices ripple through the lives of a cast of deeply flawed, wonderfully complicated NPCs.</p>
+                    <div class="game-features">
+                        <div class="feature-item">
+                            <div class="feature-dot"></div>
+                            <span data-en="Business and relationships are mechanically interdependent — ignore your NPCs and they tank your bar" data-cn="经营与人际关系机制联动——忽视NPC，酒吧就会走下坡路">Business and relationships are mechanically interdependent — ignore your NPCs and they tank your bar</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-dot"></div>
+                            <span data-en="Multi-dimensional characters with branching storylines driven by your choices" data-cn="多维角色，分支剧情由你的选择驱动">Multi-dimensional characters with branching storylines driven by your choices</span>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-dot"></div>
+                            <span data-en="Romance, rivalry, family secrets, and the occasional murder — all served over the counter" data-cn="浪漫、对抗、家族秘密，偶尔还有谋杀——都发生在吧台前">Romance, rivalry, family secrets, and the occasional murder — all served over the counter</span>
+                        </div>
+                    </div>
+                    <div class="game-status">
+                        <div class="status-dot"></div>
+                        <span data-en="In Development · PC / Steam" data-cn="开发中 · PC / Steam">In Development · PC / Steam</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TEAM -->
+    <section id="team">
+        <div class="section-inner">
+            <div class="reveal">
+                <div class="section-label" data-en="About Us" data-cn="关于我们">About Us</div>
+                <h2 class="section-title" data-en="The Team" data-cn="团队成员">The Team</h2>
+                <p class="team-intro" data-en="We're a 6-person international team based in Tampere, Finland — 2 programmers, 2 game designers, and 2 artists. United by the belief that games can make people feel something real." data-cn="我们是一支由6人组成的国际化团队，坐标芬兰坦佩雷：2名游戏开发工程师、2名游戏设计师、2名美术。我们相信游戏可以让人感受到真实的情感。">We're a 6-person international team based in Tampere, Finland — 2 programmers, 2 game designers, and 2 artists. United by the belief that games can make people feel something real.</p>
+            </div>
+            <div class="team-grid">
+                <div class="team-card reveal">
+                    <div class="team-photo">👤</div>
+                    <div class="team-name">Name</div>
+                    <div class="team-title">CEO & Lead Programmer</div>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-photo">👤</div>
+                    <div class="team-name">Name</div>
+                    <div class="team-title">Co-founder & Programmer</div>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-photo">👤</div>
+                    <div class="team-name">Name</div>
+                    <div class="team-title">Game Designer</div>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-photo">👤</div>
+                    <div class="team-name">Name</div>
+                    <div class="team-title">Game Designer</div>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-photo">👤</div>
+                    <div class="team-name">Name</div>
+                    <div class="team-title">Artist</div>
+                </div>
+                <div class="team-card reveal">
+                    <div class="team-photo">👤</div>
+                    <div class="team-name">Name</div>
+                    <div class="team-title">Artist</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="section-inner reveal">
+            <div class="section-label" data-en="Get in Touch" data-cn="联系我们">Get in Touch</div>
+            <h2 class="section-title" data-en="Let's Talk" data-cn="期待与你交流">Let's Talk</h2>
+            <p class="contact-text" data-en="Interested in SharkTown, partnership opportunities, or just want to say hi? Drop us an email." data-cn="对「鲨鱼小镇」感兴趣、想洽谈合作、或只是想打个招呼？欢迎发邮件给我们。">Interested in SharkTown, partnership opportunities, or just want to say hi? Drop us an email.</p>
+            <a class="contact-email">
+                sharkgame.cn@gmail.com
+            </a>
+            <div class="footer-bottom">
+                <div>© 2026 SharkGame Studio. All rights reserved.</div>
+                <div class="footer-location" data-en="Tampere, Finland" data-cn="芬兰·坦佩雷">Tampere, Finland</div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        // Scroll reveal
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, i * 100);
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.15 });
+        reveals.forEach(el => observer.observe(el));
+
+        // Nav scroll shadow
+        window.addEventListener('scroll', () => {
+            document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 20);
+        });
+
+        // Language switch
+        let currentLang = 'en';
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.body.classList.toggle('cn', lang === 'cn');
+
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.textContent.trim() === (lang === 'en' ? 'EN' : '中文'));
+            });
+
+            document.querySelectorAll('[data-en]').forEach(el => {
+                const text = el.getAttribute(`data-${lang}`);
+                if (text) el.innerHTML = text;
+            });
+        }
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
